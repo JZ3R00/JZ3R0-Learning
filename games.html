@@ -179,6 +179,15 @@
             cursor: pointer;
         }
 
+        .game-card.clickable {
+            cursor: pointer;
+        }
+
+        .game-card.coming-soon {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
         .game-card::before {
             content: '';
             position: absolute;
@@ -487,13 +496,27 @@
             header.style.background = `rgba(10, 10, 10, ${opacity})`;
         });
 
-        // Add click animation to game cards
+        // Add click animation and navigation to game cards
         gameCards.forEach(card => {
             card.addEventListener('click', () => {
-                card.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    card.style.transform = 'translateY(-15px)';
-                }, 100);
+                const gameTitle = card.querySelector('h3').textContent;
+                const gameStatus = card.querySelector('.game-status').textContent;
+                
+                // Only navigate to live and beta games
+                if (gameStatus === 'LIVE NOW' || gameStatus === 'BETA') {
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        // Convert game title to filename
+                        const filename = gameTitle.toLowerCase().replace(/\s+/g, '-') + '.html';
+                        window.location.href = filename;
+                    }, 100);
+                } else {
+                    // Coming soon games just animate
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        card.style.transform = 'translateY(-15px)';
+                    }, 100);
+                }
             });
         });
 
